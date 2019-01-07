@@ -19,17 +19,15 @@ import scala.math.{exp, log, pow}
   *
   * <p>require {{{logisticM != 0}}}</p>
   */
-trait TLogistic extends TUnivariateFunction
-  with TUnivariateDifferentiableFunction
-  with TUnivariateDerivativeFunction
-  with TUnivariateIntegrableFunction
-  with TUnivariateIntegralFunction {
+class Logistic(val logisticM: Double = 1.0,
+               val logisticK: Double = 1.0,
+               val logisticX0: Double = 0.0) extends UnivariateFunction
+  with UnivariateDifferentiableFunction
+  with UnivariateDerivativeFunction
+  with UnivariateIntegrableFunction
+  with UnivariateIntegralFunction {
 
-  val logisticM: Double = 1
-  val logisticK: Double = 1
-  val logisticX0: Double = 0
-
-  if (logisticM == 0) throw new IllegalArgumentException(
+  if (logisticM == 0.0) throw new IllegalArgumentException(
     s"Expected the property {logisticM != 0},but get {logisticM = $logisticM}")
 
   /**
@@ -38,19 +36,19 @@ trait TLogistic extends TUnivariateFunction
   override val formula: String = s"$logisticM / (1 + exp(-$logisticK * (x - $logisticX0)))"
 
   def logisticExp(x: Double): Double = {
-    TLogistic.logisticExp(logisticM, logisticK, logisticX0)(x)
+    Logistic.logisticExp(logisticM, logisticK, logisticX0)(x)
   }
 
   def logisticExpPluOne(x: Double): Double = {
-    TLogistic.logisticExpPlusOne(logisticM, logisticK, logisticX0)(x)
+    Logistic.logisticExpPlusOne(logisticM, logisticK, logisticX0)(x)
   }
 
   override def derivative(x: Double): Double = {
-    TLogistic.logisticDerivative(logisticM, logisticK, logisticX0)(x)
+    Logistic.logisticDerivative(logisticM, logisticK, logisticX0)(x)
   }
 
   override def integrate(x: Double): Double = {
-    TLogistic.logisticIntegrate(logisticM, logisticK, logisticX0)(x)
+    Logistic.logisticIntegrate(logisticM, logisticK, logisticX0)(x)
   }
 
   override def value(t: DerivativeStructure): DerivativeStructure = {
@@ -58,11 +56,11 @@ trait TLogistic extends TUnivariateFunction
   }
 
   override def value(x: Double): Double = {
-    TLogistic.logistic(logisticM, logisticK, logisticX0)(x)
+    Logistic.logistic(logisticM, logisticK, logisticX0)(x)
   }
 
   override def equals(other: Any): Boolean = other match {
-    case that: TLogistic =>
+    case that: Logistic =>
       (that canEqual this) &&
         logisticM == that.logisticM &&
         logisticK == that.logisticK &&
@@ -75,97 +73,97 @@ trait TLogistic extends TUnivariateFunction
     state.map(_.hashCode()).foldLeft(0)((a, b) => 31 * a + b)
   }
 
-  def canEqual(other: Any): Boolean = other.isInstanceOf[TLogistic]
+  def canEqual(other: Any): Boolean = other.isInstanceOf[Logistic]
 }
 
-object TLogistic {
+object Logistic {
   /**
     * lexp(x) = exp(-k*(x-x0))
     */
-  def logisticExp(logisticM: Double = 1,
-                  logisticK: Double = 1,
-                  logisticX0: Double = 0)(x: Double): Double = {
+  def logisticExp(logisticM: Double = 1.0,
+                  logisticK: Double = 1.0,
+                  logisticX0: Double = 0.0)(x: Double): Double = {
     exp(-logisticK * (x - logisticX0))
   }
 
   /**
     * lexpp1(x) = 1 + exp(-k*(x-x0))
     */
-  def logisticExpPlusOne(logisticM: Double = 1,
-                         logisticK: Double = 1,
-                         logisticX0: Double = 0)(x: Double): Double = {
+  def logisticExpPlusOne(logisticM: Double = 1.0,
+                         logisticK: Double = 1.0,
+                         logisticX0: Double = 0.0)(x: Double): Double = {
     1 + logisticExp(logisticM, logisticK, logisticX0)(x)
   }
 
   /**
     * lexpp1p2(x) = pow(1 + exp(-k*(x-x0)),2)
     */
-  def logisticExpPlusOnePow2(logisticM: Double = 1,
-                             logisticK: Double = 1,
-                             logisticX0: Double = 0)(x: Double): Double = {
+  def logisticExpPlusOnePow2(logisticM: Double = 1.0,
+                             logisticK: Double = 1.0,
+                             logisticX0: Double = 0.0)(x: Double): Double = {
     pow(logisticExpPlusOne(logisticM, logisticK, logisticX0)(x), 2)
   }
 
   /**
     * lexpp1pn1(x) = pow(1 + exp(-k*(x-x0)),-1) = 1/(1 + exp(-k*(x-x0)))
     */
-  def logisticExpPlusOnePowN1(logisticM: Double = 1,
-                              logisticK: Double = 1,
-                              logisticX0: Double = 0)(x: Double): Double = {
+  def logisticExpPlusOnePowN1(logisticM: Double = 1.0,
+                              logisticK: Double = 1.0,
+                              logisticX0: Double = 0.0)(x: Double): Double = {
     1 / logisticExpPlusOne(logisticM, logisticK, logisticX0)(x)
   }
 
   /**
     * l(x) = m / (1 + exp(-k*(x-x0)))
     */
-  def logistic(logisticM: Double = 1,
-               logisticK: Double = 1,
-               logisticX0: Double = 0)(x: Double): Double = {
+  def logistic(logisticM: Double = 1.0,
+               logisticK: Double = 1.0,
+               logisticX0: Double = 0.0)(x: Double): Double = {
     logisticM / logisticExpPlusOne(logisticM, logisticK, logisticX0)(x)
   }
 
   /**
     * il(x) = m * (x+log(1 + exp(-k*(x-x0)))/k)
     */
-  def logisticIntegrate(logisticM: Double = 1,
-                        logisticK: Double = 1,
-                        logisticX0: Double = 0)(x: Double): Double = {
+  def logisticIntegrate(logisticM: Double = 1.0,
+                        logisticK: Double = 1.0,
+                        logisticX0: Double = 0.0)(x: Double): Double = {
     logisticM * (x + log(logisticExpPlusOne(logisticM, logisticK, logisticX0)(x)) / logisticK)
   }
 
   /**
     * dl(x)
     */
-  def logisticDerivative(logisticM: Double = 1,
-                         logisticK: Double = 1,
-                         logisticX0: Double = 0)(x: Double): Double = {
+  def logisticDerivative(logisticM: Double = 1.0,
+                         logisticK: Double = 1.0,
+                         logisticX0: Double = 0.0)(x: Double): Double = {
     (logisticM * logisticK * logisticExp(logisticM, logisticK, logisticX0)(x)) / logisticExpPlusOnePow2(logisticM, logisticK, logisticX0)(x)
   }
 
   /**
     * dlm(x)
     */
-  def logisticDerivativeM(logisticM: Double = 1,
-                          logisticK: Double = 1,
-                          logisticX0: Double = 0)(x: Double): Double = {
+  def logisticDerivativeM(logisticM: Double = 1.0,
+                          logisticK: Double = 1.0,
+                          logisticX0: Double = 0.0)(x: Double): Double = {
     logisticExpPlusOnePowN1(logisticM, logisticK, logisticX0)(x)
   }
 
   /**
     * dlk(x)
     */
-  def logisticDerivativeK(logisticM: Double = 1,
-                          logisticK: Double = 1,
-                          logisticX0: Double = 0)(x: Double): Double = {
+  def logisticDerivativeK(logisticM: Double = 1.0,
+                          logisticK: Double = 1.0,
+                          logisticX0: Double = 0.0)(x: Double): Double = {
     -(logisticM * (-x + logisticX0) * logisticExp(logisticM, logisticK, logisticK)(x)) / logisticExpPlusOnePow2(logisticM, logisticK, logisticX0)(x)
   }
 
   /**
     * dlx0(x)
     */
-  def logisticDerivativeX0(logisticM: Double = 1,
-                           logisticK: Double = 1,
-                           logisticX0: Double = 0)(x: Double): Double = {
+  def logisticDerivativeX0(logisticM: Double = 1.0,
+                           logisticK: Double = 1.0,
+                           logisticX0: Double = 0.0)(x: Double): Double = {
     -(logisticK * logisticM * logisticExp(logisticM, logisticK, logisticX0)(x)) / logisticExpPlusOnePow2(logisticM, logisticK, logisticX0)(x)
   }
 
@@ -193,18 +191,13 @@ object TLogistic {
       s"Expected the parameter {parameters(0) != 0},but got {parameters(0) = ${parameters.head}}")
   }
 
-  def apply(logisticM: Double = 1,
-            logisticK: Double = 1,
-            logisticX0: Double = 0): TLogistic = {
+  def apply(logisticM: Double = 1.0,
+            logisticK: Double = 1.0,
+            logisticX0: Double = 0.0): Logistic = {
     Logistic(logisticM, logisticK, logisticX0)
   }
 
-  def unapply(logistic: TLogistic): Option[(Double, Double, Double)] =
+  def unapply(logistic: Logistic): Option[(Double, Double, Double)] =
     if (logistic == null) None
     else Some(logistic.logisticM, logistic.logisticK, logistic.logisticX0)
 }
-
-final case class Logistic(override val logisticM: Double = 1.0,
-                          override val logisticK: Double = 1.0,
-                          override val logisticX0: Double = 0.0)
-  extends TLogistic

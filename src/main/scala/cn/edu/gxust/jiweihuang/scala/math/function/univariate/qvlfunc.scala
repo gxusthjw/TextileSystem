@@ -1,27 +1,25 @@
 package cn.edu.gxust.jiweihuang.scala.math.function.univariate
 
-import cn.edu.gxust.jiweihuang.scala.math.function.{TUnivariateDerivativeFunction, TUnivariateDifferentiableFunction, TUnivariateFunction, TUnivariateIntegrableFunction}
+import cn.edu.gxust.jiweihuang.scala.math.function.{UnivariateDerivativeFunction, UnivariateDifferentiableFunction, UnivariateFunction, UnivariateIntegrableFunction}
 import org.hipparchus.analysis.ParametricUnivariateFunction
 import org.hipparchus.analysis.differentiation.DerivativeStructure
 
 import scala.math._
 
-trait TQuadraticVertexLogistic extends TUnivariateFunction
-  with TUnivariateDifferentiableFunction
-  with TUnivariateIntegrableFunction
-  with TUnivariateDerivativeFunction {
-
-  val quadraticVertexA: Double = 1
-  val quadraticVertexB: Double = 0
-  val quadraticVertexC: Double = 0
-  val logisticM: Double = 1
-  val logisticK: Double = 1
-  val logisticX0: Double = 0
-  val quadraticVertexLogisticD: Double = 0
+class QuadraticVertexLogistic(val quadraticVertexA: Double = 1.0,
+                              val quadraticVertexB: Double = 0.0,
+                              val quadraticVertexC: Double = 0.0,
+                              val logisticM: Double = 1.0,
+                              val logisticK: Double = 1.0,
+                              val logisticX0: Double = 0.0,
+                              val quadraticVertexLogisticD: Double = 0.0) extends UnivariateFunction
+  with UnivariateDifferentiableFunction
+  with UnivariateIntegrableFunction
+  with UnivariateDerivativeFunction {
 
   override val formula: String = s"($quadraticVertexA * pow(x - $quadraticVertexB,2) + $quadraticVertexC) * $logisticM / (1 + exp(-$logisticK*(x - $logisticX0))) + $quadraticVertexLogisticD"
-  val quadraticVertex: TQuadraticVertex = QuadraticVertex(quadraticVertexA, quadraticVertexB, quadraticVertexC)
-  val logistic: TLogistic = Logistic(logisticM, logisticK, logisticX0)
+  val quadraticVertex: QuadraticVertex = QuadraticVertex(quadraticVertexA, quadraticVertexB, quadraticVertexC)
+  val logistic: Logistic = Logistic(logisticM, logisticK, logisticX0)
 
   override def derivative(x: Double): Double = quadraticVertex.derivative(x) * logistic.value(x) + logistic.derivative(x) * quadraticVertex.value(x)
 
@@ -30,10 +28,10 @@ trait TQuadraticVertexLogistic extends TUnivariateFunction
   override def value(x: Double): Double = logistic.value(x) * quadraticVertex.value(x) + quadraticVertexLogisticD
 }
 
-object TQuadraticVertexLogistic {
+object QuadraticVertexLogistic {
 
-  import cn.edu.gxust.jiweihuang.scala.math.function.univariate.TLogistic._
-  import cn.edu.gxust.jiweihuang.scala.math.function.univariate.TQuadraticVertex._
+  import cn.edu.gxust.jiweihuang.scala.math.function.univariate.Logistic._
+  import cn.edu.gxust.jiweihuang.scala.math.function.univariate.QuadraticVertex._
 
   def quadraticVertexLogistic(a: Double, b: Double, c: Double,
                               m: Double, k: Double, x0: Double,
@@ -90,7 +88,7 @@ object TQuadraticVertexLogistic {
   final class Parametric extends ParametricUnivariateFunction {
     override def value(x: Double, parameters: Double*): Double = {
       checkParameter(parameters: _*)
-      TQuadraticVertexLogistic.quadraticVertexLogistic(parameters(0),
+      QuadraticVertexLogistic.quadraticVertexLogistic(parameters(0),
         parameters(1), parameters(2), parameters(3), parameters(4),
         parameters(5), parameters(6))(x)
     }
@@ -132,17 +130,17 @@ object TQuadraticVertexLogistic {
     }
   }
 
-  def apply(quadraticVertexA: Double = 1,
-            quadraticVertexB: Double = 0,
-            quadraticVertexC: Double = 0,
-            logisticM: Double = 1,
-            logisticK: Double = 1,
-            logisticX0: Double = 0,
-            quadraticVertexLogisticD: Double = 0): TQuadraticVertexLogistic =
+  def apply(quadraticVertexA: Double = 1.0,
+            quadraticVertexB: Double = 0.0,
+            quadraticVertexC: Double = 0.0,
+            logisticM: Double = 1.0,
+            logisticK: Double = 1.0,
+            logisticX0: Double = 0.0,
+            quadraticVertexLogisticD: Double = 0.0): QuadraticVertexLogistic =
     QuadraticVertexLogistic(quadraticVertexA, quadraticVertexB, quadraticVertexC, logisticM,
       logisticK, logisticX0, quadraticVertexLogisticD)
 
-  def unapply(quadraticVertexLogistic: TQuadraticVertexLogistic): Option[(Double, Double, Double, Double, Double, Double, Double)] =
+  def unapply(quadraticVertexLogistic: QuadraticVertexLogistic): Option[(Double, Double, Double, Double, Double, Double, Double)] =
     if (quadraticVertexLogistic == null) None
     else Some(quadraticVertexLogistic.quadraticVertexA,
       quadraticVertexLogistic.quadraticVertexB,
@@ -152,12 +150,3 @@ object TQuadraticVertexLogistic {
       quadraticVertexLogistic.logisticX0,
       quadraticVertexLogistic.quadraticVertexLogisticD)
 }
-
-final case class QuadraticVertexLogistic(override val quadraticVertexA: Double = 1.0,
-                                         override val quadraticVertexB: Double = 0.0,
-                                         override val quadraticVertexC: Double = 0.0,
-                                         override val logisticM: Double = 1.0,
-                                         override val logisticK: Double = 1.0,
-                                         override val logisticX0: Double = 0.0,
-                                         override val quadraticVertexLogisticD: Double = 0.0)
-  extends TQuadraticVertexLogistic

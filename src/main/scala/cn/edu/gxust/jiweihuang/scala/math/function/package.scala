@@ -1,19 +1,19 @@
 package cn.edu.gxust.jiweihuang.scala.math
 
-import org.hipparchus.analysis.UnivariateFunction
-import org.hipparchus.analysis.differentiation.UnivariateDifferentiableFunction
+import org.hipparchus.analysis
+import org.hipparchus.analysis.differentiation
 
 package object function {
 
   /**
     * The univariate function
     * <p>
-    * it inherit from {{{org.hipparchus.analysis.UnivariateFunction}}}
-    * in order to get the functionality of {{{hipparchus}}} library.
+    * it inherit from {{{UnivariateFunction}}} class of
+    * {{{org.hipparchus.analysis}}} package in {{{hipparchus}}} library of which
+    * in order to get the functionality
     * </p>
     *
-    * The follow code is used to usage:
-    *
+    * The usage:
     * {{{
     *   //Create UnivariateFunction instance.
     *   val uf:UnivariateFunction
@@ -27,14 +27,18 @@ package object function {
     *   assert functionValue1 == functionValue2
     * }}}
     **/
-  trait TUnivariateFunction extends UnivariateFunction
+  trait UnivariateFunction extends analysis.UnivariateFunction
     with Serializable {
 
     /**
       * calculating the value of function in object invocation syntax.
-      *
+      * The usage:
+      * {{{
+      *   val uf:UnivariateFunction
+      *   val functionValue:Double = uf(x)
+      * }}}
       * @param x independent variable.
-      * @return the function value
+      * @return the function value.
       */
     def apply(x: Double): Double = value(x)
 
@@ -45,7 +49,7 @@ package object function {
   }
 
   /** The derivative function of univariate function */
-  trait TUnivariateDerivativeFunction extends TUnivariateFunction {
+  trait UnivariateDerivativeFunction extends UnivariateFunction {
     /**
       * calculating the value of derivative function.
       *
@@ -56,7 +60,7 @@ package object function {
   }
 
   /** The integral function of univariate function */
-  trait TUnivariateIntegralFunction extends TUnivariateFunction {
+  trait UnivariateIntegralFunction extends UnivariateFunction {
 
     /**
       * calculating the value of integral function.
@@ -80,7 +84,7 @@ package object function {
   }
 
   /** The inverse function of univariate function */
-  trait TUnivariateInverseFunction extends TUnivariateFunction {
+  trait UnivariateInverseFunction extends UnivariateFunction {
     def inverse(x: Double): Array[Double]
   }
 
@@ -93,8 +97,8 @@ package object function {
     * val secondOrderDerivative:Double = udf.differential(x,2)
     * }}}
     **/
-  trait TUnivariateDifferentiableFunction extends TUnivariateFunction
-    with UnivariateDifferentiableFunction {
+  trait UnivariateDifferentiableFunction extends UnivariateFunction
+    with differentiation.UnivariateDifferentiableFunction {
 
     import org.hipparchus.analysis.differentiation.DSFactory
 
@@ -105,7 +109,7 @@ package object function {
   }
 
   /** The integrable univariate function */
-  trait TUnivariateIntegrableFunction extends TUnivariateFunction {
+  trait UnivariateIntegrableFunction extends UnivariateFunction {
 
     import org.hipparchus.analysis.integration._
 
@@ -163,5 +167,4 @@ package object function {
         relativeAccuracy, absoluteAccuracy, minimalIterationCount,
         maximalIterationCount).integrate(maxIter, this, lowerX, upperX)
   }
-
 }

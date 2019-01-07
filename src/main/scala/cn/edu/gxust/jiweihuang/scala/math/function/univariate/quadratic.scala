@@ -7,22 +7,22 @@ import org.hipparchus.analysis.differentiation.DerivativeStructure
 import scala.math._
 
 /**
-  * The trait [[TQuadratic]] is used for
+  * The trait [[Quadratic]] is used for
   * representing quadratic function.
   *
-  * @see TUnivariateFunction
-  * @see TUnivariateInverseFunction
-  * @see TUnivariateDerivativeFunction
-  * @see TUnivariateDifferentiableFunction
-  * @see TUnivariateIntegrableFunction
-  * @see TUnivariateIntegrateFunction
+  * @see UnivariateFunction
+  * @see UnivariateInverseFunction
+  * @see UnivariateDerivativeFunction
+  * @see UnivariateDifferentiableFunction
+  * @see UnivariateIntegrableFunction
+  * @see UnivariateIntegralFunction
   */
-trait TQuadratic extends TUnivariateFunction
-  with TUnivariateInverseFunction
-  with TUnivariateDerivativeFunction
-  with TUnivariateDifferentiableFunction
-  with TUnivariateIntegralFunction
-  with TUnivariateIntegrableFunction {
+trait Quadratic extends UnivariateFunction
+  with UnivariateInverseFunction
+  with UnivariateDerivativeFunction
+  with UnivariateDifferentiableFunction
+  with UnivariateIntegralFunction
+  with UnivariateIntegrableFunction {
 
   /**
     * The vertex coordinates (x,y) of quadratic function
@@ -63,10 +63,10 @@ trait TQuadratic extends TUnivariateFunction
   *
   * @see TQuadratic
   */
-trait TQuadraticVertex extends TQuadratic {
-  val quadraticVertexA: Double = 1.0
-  val quadraticVertexB: Double = 0.0
-  val quadraticVertexC: Double = 0.0
+class QuadraticVertex(val quadraticVertexA: Double = 1.0,
+                      val quadraticVertexB: Double = 0.0,
+                      val quadraticVertexC: Double = 0.0) extends Quadratic {
+
   /**
     * Ensure the parameters {{{quadraticVertexA != 0}}}
     */
@@ -103,7 +103,7 @@ trait TQuadraticVertex extends TQuadratic {
   override val formula: String = s"$quadraticVertexA * pow(x - $quadraticVertexB, 2) + $quadraticVertexC"
 
   override def value(x: Double): Double = {
-    TQuadraticVertex.quadraticVertex(quadraticVertexA, quadraticVertexB, quadraticVertexC)(x)
+    QuadraticVertex.quadraticVertex(quadraticVertexA, quadraticVertexB, quadraticVertexC)(x)
   }
 
   override def value(x: DerivativeStructure): DerivativeStructure = {
@@ -111,19 +111,19 @@ trait TQuadraticVertex extends TQuadratic {
   }
 
   override def inverse(y: Double): Array[Double] = {
-    TQuadraticVertex.quadraticVertexInverse(quadraticVertexA, quadraticVertexB, quadraticVertexC)(y)
+    QuadraticVertex.quadraticVertexInverse(quadraticVertexA, quadraticVertexB, quadraticVertexC)(y)
   }
 
   override def integrate(x: Double): Double = {
-    TQuadraticVertex.quadraticVertexIntegrate(quadraticVertexA, quadraticVertexB, quadraticVertexC)(x)
+    QuadraticVertex.quadraticVertexIntegrate(quadraticVertexA, quadraticVertexB, quadraticVertexC)(x)
   }
 
   override def derivative(x: Double): Double = {
-    TQuadraticVertex.quadraticVertexDerivative(quadraticVertexA, quadraticVertexB, quadraticVertexC)(x)
+    QuadraticVertex.quadraticVertexDerivative(quadraticVertexA, quadraticVertexB, quadraticVertexC)(x)
   }
 
   override def equals(other: Any): Boolean = other match {
-    case that: TQuadraticVertex =>
+    case that: QuadraticVertex =>
       (that canEqual this) &&
         quadraticVertexA == that.quadraticVertexA &&
         quadraticVertexB == that.quadraticVertexB &&
@@ -131,7 +131,7 @@ trait TQuadraticVertex extends TQuadratic {
     case _ => false
   }
 
-  def canEqual(other: Any): Boolean = other.isInstanceOf[TQuadraticVertex]
+  def canEqual(other: Any): Boolean = other.isInstanceOf[QuadraticVertex]
 
   override def hashCode(): Int = {
     val state = Seq(quadraticVertexA, quadraticVertexB, quadraticVertexC)
@@ -140,7 +140,7 @@ trait TQuadraticVertex extends TQuadratic {
 }
 
 
-object TQuadraticVertex {
+object QuadraticVertex {
 
   /**
     * q(x) = a * pow(x-b,2) + c
@@ -238,10 +238,10 @@ object TQuadraticVertex {
   }
 
   def apply(quadraticVertexA: Double = 1.0, quadraticVertexB: Double = 0.0,
-            quadraticVertexC: Double = 0.0): TQuadraticVertex =
+            quadraticVertexC: Double = 0.0): QuadraticVertex =
     QuadraticVertex(quadraticVertexA, quadraticVertexB, quadraticVertexC)
 
-  def unapply(qv: TQuadraticVertex): Option[(Double, Double, Double)] = {
+  def unapply(qv: QuadraticVertex): Option[(Double, Double, Double)] = {
     if (qv == null) {
       None
     } else {
@@ -250,8 +250,3 @@ object TQuadraticVertex {
   }
 
 }
-
-final case class QuadraticVertex(override val quadraticVertexA: Double = 1.0,
-                                 override val quadraticVertexB: Double = 0.0,
-                                 override val quadraticVertexC: Double = 0.0)
-  extends TQuadraticVertex
